@@ -13,11 +13,11 @@ app.get("/api/agency-request", (req, res) => {
 });
 
 app.post("/api/agency-request", (req, res) => {
-  const { name, stdndNo, classcardId, classcardPw, amount } = req.body;
-  if (db.some((e) => e.stdndNo === stdndNo)) {
+  const { name, stdntNo, classcardId, classcardPw, amount } = req.body;
+  if (db.some((e) => e.stdntNo === stdntNo)) {
     res.status(200).json({ success: false, msg: "이미 신청하셨습니다." });
   } else {
-    db.push({ name, stdndNo, classcardId, classcardPw, amount });
+    db.push({ name, stdntNo, classcardId, classcardPw, amount });
     res.status(200).json({ success: true, msg: "신청되었습니다." });
   }
 });
@@ -25,3 +25,8 @@ app.post("/api/agency-request", (req, res) => {
 app.listen(3000, () => {
   console.log("listening in port 3000");
 });
+
+김휘영
+young018
+!follow74
+1000
