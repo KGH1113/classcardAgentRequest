@@ -25,8 +25,3 @@ app.post("/api/agency-request", (req, res) => {
 app.listen(3000, () => {
   console.log("listening in port 3000");
 });
-
-김휘영
-young018
-!follow74
-1000
