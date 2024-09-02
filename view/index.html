@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>클래스카드 대리 신청</title>
+    <style>
+      * {
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      body {
+        padding: 1rem;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      input {
+        border: 1px solid black;
+        padding: 0.5rem;
+        border-radius: 0.3rem;
+      }
+      ul {
+        border: 1px solid black;
+        border-radius: 0.3rem;
+        padding: 1rem;
+        padding-left: 1.5rem;
+      }
+      button {
+        border: none;
+        background-color: #000;
+        color: #fff;
+        padding: 0.7rem 2rem;
+        border-radius: 0.5rem;
+        width: fit-content;
+      }
+      button:disabled {
+        border: none;
+        background-color: #cfcfcf;
+        color: #fff;
+        padding: 0.7rem 2rem;
+        border-radius: 0.5rem;
+        width: fit-content;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>클래스카드 대리 신청</h1>
+    <form>
+      <section>
+        <label for="name">신청자 본명</label>
+        <input id="name" />
+      </section>
+      <section>
+        <label for="stdntNo">신청자 학변</label>
+        <input id="stdntNo" />
+      </section>
+      <section>
+        <label for="classcardId">클래스카드 아이디</label>
+        <input id="classcardId" />
+      </section>
+      <section>
+        <label for="classcardPw">클래스카드 비번</label>
+        <input id="classcardPw" />
+      </section>
+      <section>
+        <label for="amount">신청 시 낼 금액</label>
+        <input id="amount" />
+      </section>
+      <section style="gap: 0">
+        <div>
+          <label for="agreeToC">다음 약관에 동의하면 체크해주세요: </label>
+          <input id="agreeToC" type="checkbox" style="width: fit-content" />
+        </div>
+        <ul>
+          <li>클래스카드 아이디, 비번은 서비스 특성상 수집해야 한다.</li>
+          <li>
+            클래스카드 대리에 관한 어떠한 정보도 선생님들께 공유하지 않는다.
+          </li>
+          <li>
+            클래스카드 대리 서비스가 선생님들께 발각되었을 시, 그에 대한 책임은
+            서비스 신청자 본인에게 있다.
+          </li>
+        </ul>
+      </section>
+      <button disabled>제출</button>
+    </form>
+
+    <script>
+      const nameInput = document.querySelector("#name");
+      const stdntNoInput = document.querySelector("#stdntNo");
+      const classcardIdInput = document.querySelector("#classcardId");
+      const classcardPwInput = document.querySelector("#classcardPw");
+      const amountInput = document.querySelector("#amount");
+      const agreeToCInput = document.querySelector("#agreeToC");
+      const btn = document.querySelector("button");
+
+      document.querySelector("form").addEventListener("input", (e) => {
+        if (
+          nameInput.value &&
+          stdntNoInput.value &&
+          classcardIdInput.value &&
+          classcardPwInput.value &&
+          amountInput.value &&
+          agreeToCInput.checked
+        ) {
+          document.querySelector("button").disabled = false;
+        } else {
+          document.querySelector("button").disabled = true;
+        }
+      });
+
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        fetch("/api/agency-request", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: nameInput.value,
+            stdntNo: stdntNoInput.value,
+            classcardId: classcardIdInput.value,
+            classcardPw: classcardPwInput.value,
+            amount: amountInput.value,
+          }),
+        })
+          .then((response) => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error("Network response was not ok.");
+          })
+          .then((data) => {
+            if (data.success) {
+              Swal.fire({
+                title: "신청되었습니다.",
+                icon: "success",
+              }).then(() => {
+                window.location.reload();
+              });
+            } else {
+              Swal.fire({
+                title: "신청에 실패하였습니다.",
+                icon: "error",
+                text: data.msg,
+              });
+            }
+          });
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </body>
+</html>
